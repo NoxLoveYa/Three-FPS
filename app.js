@@ -60,6 +60,14 @@ camera.position.y = 2;
 const controls = new OrbitControls( camera, renderer.domElement );
 controls.listenToKeyEvents( window );
 
+//resize renderer on window resize
+window.addEventListener( 'resize', function () {
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+
+	renderer.setSize( window.innerWidth, window.innerHeight );
+}, false );
+
 //Animate scene
 const animate = function () {
 	requestAnimationFrame( animate );
