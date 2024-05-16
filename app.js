@@ -47,7 +47,7 @@ scene.add( gridHelper );
 const ambientLight = new THREE.AmbientLight( "rgb(255, 255? 255)", 0.1 );
 
 const directionalLight = new THREE.DirectionalLight( "rgb(255, 255, 255)", 1 );
-directionalLight.position.set( 1, 1, 1 ).normalize();
+directionalLight.position.set( 1, 1, 0 ).normalize();
 
 scene.add( directionalLight );
 scene.add( ambientLight );
