@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
 //Create scene and camera
 const scene = new THREE.Scene();
@@ -18,12 +19,18 @@ scene.add( cube );
 //Setup scene and camera
 camera.position.z = 5;
 
+//Add orbit controls
+const controls = new OrbitControls( camera, renderer.domElement );
+controls.listenToKeyEvents( window );
+
 //Animate scene
 const animate = function () {
 	requestAnimationFrame( animate );
 
 	cube.rotation.x += 0.01;
 	cube.rotation.y += 0.01;
+
+	controls.update();
 
 	renderer.render( scene, camera );
 };
