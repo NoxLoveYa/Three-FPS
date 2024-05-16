@@ -12,9 +12,19 @@ document.body.appendChild( renderer.domElement );
 
 //Create cube and add to scene
 const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshBasicMaterial( { color: "rgb(255, 0, 0)" } );
+const material = new THREE.MeshPhongMaterial( { color: "rgb(255, 0, 0)" } );
 const cube = new THREE.Mesh( geometry, material );
 scene.add( cube );
+
+//Create light and add to scene
+const ambientLight = new THREE.AmbientLight( "rgb(255, 255? 255)", 0.1 );
+
+const directionalLight = new THREE.DirectionalLight( "rgb(255, 255, 255)", 1 );
+directionalLight.position.set( 1, 1, 1 ).normalize();
+
+scene.add( directionalLight );
+scene.add( ambientLight );
+
 
 //Setup scene and camera
 camera.position.z = 5;
