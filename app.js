@@ -68,6 +68,31 @@ window.addEventListener( 'resize', function () {
 	renderer.setSize( window.innerWidth, window.innerHeight );
 }, false );
 
+//Add event listener for keydown
+document.addEventListener( 'keydown', function ( event ) {
+	if ( event.key === "z" ) {
+		cube.position.z -= 0.1;
+	} else if ( event.key === "s" ) {
+		cube.position.z += 0.1;
+	} else if ( event.key === "q" ) {
+		cube.position.x -= 0.1;
+	} else if ( event.key === "d" ) {
+		cube.position.x += 0.1;
+	}
+}, false );
+
+document.addEventListener( 'keydown', function ( event ) {
+	if ( event.key === "i" ) {
+		cube2.position.z -= 0.1;
+	} else if ( event.key === "k" ) {
+		cube2.position.z += 0.1;
+	} else if ( event.key === "j" ) {
+		cube2.position.x -= 0.1;
+	} else if ( event.key === "l" ) {
+		cube2.position.x += 0.1;
+	}
+}, false );
+
 //Animate scene
 const animate = function () {
 	requestAnimationFrame( animate );
