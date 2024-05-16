@@ -34,6 +34,7 @@ cube.material.color.set( "rgb(75, 255, 0)" );
 scene.add( cube );
 
 const cube2 = new THREE.Mesh( geometry.cube.clone(), material.phong.clone() );
+
 cube2.position.setX(-1);
 cube2.position.setY(1);
 cube2.material.color.set( "rgb(148, 0, 211)"  );
@@ -70,14 +71,32 @@ window.addEventListener( 'resize', function () {
 
 //Add event listener for keydown
 document.addEventListener( 'keydown', function ( event ) {
+	const cube2BoundingBox = new THREE.Box3().setFromObject( cube2 );
+	const cubeClone = cube.clone();
 	if ( event.key === "z" ) {
-		cube.position.z -= 0.1;
+		cubeClone.position.set( cube.position.x, cube.position.y, cube.position.z - 0.05 );
+		const cubeBoundingBox = new THREE.Box3().setFromObject( cubeClone );
+		if ( !cubeBoundingBox.intersectsBox( cube2BoundingBox ) ) {
+			cube.position.z -= 0.1;
+		}
 	} else if ( event.key === "s" ) {
-		cube.position.z += 0.1;
+		cubeClone.position.set( cube.position.x, cube.position.y, cube.position.z + 0.05 );
+		const cubeBoundingBox = new THREE.Box3().setFromObject( cubeClone );
+		if ( !cubeBoundingBox.intersectsBox( cube2BoundingBox ) ) {
+			cube.position.z += 0.1;
+		}
 	} else if ( event.key === "q" ) {
-		cube.position.x -= 0.1;
+		cubeClone.position.set( cube.position.x - 0.05, cube.position.y, cube.position.z );
+		const cubeBoundingBox = new THREE.Box3().setFromObject( cubeClone );
+		if ( !cubeBoundingBox.intersectsBox( cube2BoundingBox ) ) {
+			cube.position.x -= 0.1;
+		}
 	} else if ( event.key === "d" ) {
-		cube.position.x += 0.1;
+		cubeClone.position.set( cube.position.x + 0.05, cube.position.y, cube.position.z );
+		const cubeBoundingBox = new THREE.Box3().setFromObject( cubeClone );
+		if ( !cubeBoundingBox.intersectsBox( cube2BoundingBox ) ) {
+			cube.position.x += 0.1;
+		}
 	}
 }, false );
 
@@ -97,11 +116,11 @@ document.addEventListener( 'keydown', function ( event ) {
 const animate = function () {
 	requestAnimationFrame( animate );
 
-	cube.rotation.x += 0.01;
-	cube.rotation.y += 0.01;
+	// cube.rotation.x += 0.01;
+	// cube.rotation.y += 0.01;
 
-	cube2.rotation.x -= 0.01;
-	cube2.rotation.y -= 0.01;
+	// cube2.rotation.x -= 0.01;
+	// cube2.rotation.y -= 0.01;
 
 	controls.update();
 
