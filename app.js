@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import fpsController, * as FPSController from './fpsController.js';
 
 //Create scene and camera
 const scene = new THREE.Scene();
@@ -19,6 +19,8 @@ scene.add( cube );
 //Setup scene and camera
 camera.position.z = 5;
 
+const test = new fpsController(camera, renderer.domElement);
+
 //resize renderer on window resize
 window.addEventListener( 'resize', function () {
 	camera.aspect = window.innerWidth / window.innerHeight;
@@ -27,12 +29,23 @@ window.addEventListener( 'resize', function () {
 	renderer.setSize( window.innerWidth, window.innerHeight );
 }, false );
 
+//Add event listeners
+window.addEventListener( 'keydown', function (event) {
+	test.onKeyDown(event);
+}, false );
+
+window.addEventListener( 'keyup', function (event) {
+	test.onKeyUp(event);
+}, false );
+
 //Animate scene
 const animate = function () {
 	requestAnimationFrame( animate );
 
 	cube.rotation.x += 0.01;
 	cube.rotation.y += 0.01;
+
+	test.update()
 
 	renderer.render( scene, camera );
 };
