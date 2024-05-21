@@ -28,6 +28,7 @@ export default class fpsController {
         };
         this.phi_ = 0;
         this.theta_ = 0;
+        this.scene_ = null;
     }
 
     onKeyDown(event) {
@@ -82,17 +83,14 @@ export default class fpsController {
 
         const qx = new THREE.Quaternion();
         qx.setFromAxisAngle(new THREE.Vector3(0, 1, 0), this.phi_);
-        console.log(this.phi_)
 
         const forward = new THREE.Vector3(0, 0, -1);
         forward.applyQuaternion(qx);
         forward.multiplyScalar(forwardVelocity * deltaTime * this.properties_.speed * 0.001);
-        console.log(forward)
 
         const left = new THREE.Vector3(-1, 0, 0);
         left.applyQuaternion(qx);
         left.multiplyScalar(strafeVelocity * deltaTime * this.properties_.speed * 0.001);
-        console.log(left)
 
         this.camera_.position.add(forward);
         this.camera_.position.add(left);
@@ -119,5 +117,20 @@ export default class fpsController {
 
     headBob() {
         //TODO
+    }
+
+    fireLookRay() {
+        if (this.scene_ === null) {
+            return;
+        }
+        // get camera direction
+        const direction = new THREE.Vector3();
+        this.camera_.getWorldDirection(direction);
+        const origin = this.camera_.position;
+
+        // create raycaster
+        const raycaster = new THREE.Raycaster(origin, direction);
+        const intersects = raycaster.intersectObjects(this.scene_.children);
+        return intersects;
     }
 }

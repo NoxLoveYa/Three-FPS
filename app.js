@@ -42,7 +42,7 @@ scene.add( cube );
 //Setup scene and camera
 camera.position.z = 5;
 
-const test = new fpsController(camera, renderer.domElement);
+const fpsCamera = new fpsController(camera, renderer.domElement);
 
 //resize renderer on window resize
 window.addEventListener( 'resize', function () {
@@ -54,11 +54,11 @@ window.addEventListener( 'resize', function () {
 
 //Add event listeners
 window.addEventListener( 'keydown', function (event) {
-	test.onKeyDown(event);
+	fpsCamera.onKeyDown(event);
 }, false );
 
 window.addEventListener( 'keyup', function (event) {
-	test.onKeyUp(event);
+	fpsCamera.onKeyUp(event);
 }, false );
 
 //Render loop
@@ -77,12 +77,14 @@ function animate() {
 
 function step(timeElapsed) {
 	const deltaTime = timeElapsed * 0.001;
-	test.update(timeElapsed);
+	fpsCamera.update(timeElapsed);
 	renderer.render( scene, camera );
 }
 
+fpsCamera.scene_ = scene;
+
 window.addEventListener('mousemove', function(event) {
-	test.updateMouseDelta(event);
+	fpsCamera.updateMouseDelta(event);
 });
 
 animate();
