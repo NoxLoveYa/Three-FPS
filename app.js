@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import fpsController, * as FPSController from './fpsController.js';
+import physicsController, * as PHYSICSController from './physicsController.js';
 
 //Create scene and camera
 const scene = new THREE.Scene();
@@ -43,6 +44,7 @@ scene.add( cube );
 camera.position.z = 5;
 
 const fpsCamera = new fpsController(camera, renderer.domElement);
+const physics = new physicsController(camera, renderer.domElement);
 
 //resize renderer on window resize
 window.addEventListener( 'resize', function () {
@@ -55,10 +57,12 @@ window.addEventListener( 'resize', function () {
 //Add event listeners
 window.addEventListener( 'keydown', function (event) {
 	fpsCamera.onKeyDown(event);
+	physics.onKeyDown(event);
 }, false );
 
 window.addEventListener( 'keyup', function (event) {
 	fpsCamera.onKeyUp(event);
+	physics.onKeyUp(event);
 }, false );
 
 //Render loop
@@ -81,7 +85,8 @@ function step(timeElapsed) {
 	//Calculate delta time
 	const deltaTime = timeElapsed * 0.001;
 	//Update camera
-	fpsCamera.update(timeElapsed);
+	fpsCamera.update(deltaTime);
+	physics.update(deltaTime);
 	//Render scene
 	renderer.render( scene, camera );
 }
