@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 const defaultInfos = {
-    speed: 0.1,
+    speed: 20,
     in_focus: true
 }
 
@@ -53,8 +53,8 @@ export default class fpsController {
         movement.multiplyScalar(this.properties_.speed);
         this.camera_.position.add(movement);
         //Check mouseDelta for rotation
-        this.camera_.rotateX(this.mouseDelta_.y * 0.001);
-        this.camera_.rotateY(this.mouseDelta_.x * 0.001);
+        this.camera_.rotateX(-this.mouseDelta_.y * 0.001 * this.properties_.speed);
+        this.camera_.rotateY(-this.mouseDelta_.x * 0.001 * this.properties_.speed);
         //Reset mouseDelta
         this.mouseDelta_ = {
             x: 0,
