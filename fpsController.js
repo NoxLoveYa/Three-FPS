@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 
 const defaultInfos = {
-    speed: 0.1
+    speed: 0.1,
+    in_focus: true
 }
 
 export default class fpsController {
@@ -15,7 +16,11 @@ export default class fpsController {
         };
         this.properties_ = defaultInfos;
         this.canvas_ = domElement;
-        //this.canvas_.addEventListener('click', this.requestPointerLock);
+        this.canvas_.addEventListener('click', this.requestPointerLock);
+        this.mouseDelta_ = {
+            x: 0,
+            y: 0
+        };
     }
 
     onKeyDown(event) {
@@ -27,6 +32,10 @@ export default class fpsController {
     }
 
     update() {
+        if (this.properties_.in_focus === false) {
+            return;
+        }
+        //Check inputs for movement
         var movement = new THREE.Vector3(0, 0, 0)
         if (this.inputs_['z']) {
             movement.z -= this.properties_.speed;
@@ -43,8 +52,14 @@ export default class fpsController {
         movement.normalize();
         movement.multiplyScalar(this.properties_.speed);
         this.camera_.position.add(movement);
-        if (this.canvas_)
-            this.canvas_.onclick = this.requestPointerLock;
+        //Check mouseDelta for rotation
+        this.camera_.rotateX(this.mouseDelta_.y * 0.001);
+        this.camera_.rotateY(this.mouseDelta_.x * 0.001);
+        //Reset mouseDelta
+        this.mouseDelta_ = {
+            x: 0,
+            y: 0
+        }
     }
 
     lockChangeAlert() {
@@ -61,9 +76,10 @@ export default class fpsController {
         document.addEventListener('pointerlockchange', this.lockChangeAlert, false);
     }
 
-    exitPointerLock() {
-        document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock || document.webkitExitPointerLock;
-        document.exitPointerLock();
-        document.removeEventListener('pointerlockchange', lockChangeAlert, false);
+    updateMouseDelta(event) {
+        this.mouseDelta_ = {
+            x: event.movementX,
+            y: event.movementY
+        }
     }
 }

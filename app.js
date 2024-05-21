@@ -52,3 +52,7 @@ const animate = function () {
 
 //Render scene
 animate();
+
+window.addEventListener('mousemove', function(event) {
+	test.updateMouseDelta(event);
+});
