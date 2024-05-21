@@ -1,13 +1,10 @@
 import * as THREE from 'three';
+import clamp, * as UTILS from './utils.js';
 
 const defaultInfos = {
     speed: 2,
     sensitivity: 20,
     in_focus: true
-}
-
-function clamp(x, a, b) {
-    return Math.min(Math.max(x, a), b);
 }
 
 export default class fpsController {
