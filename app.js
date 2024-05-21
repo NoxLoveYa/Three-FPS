@@ -10,10 +10,33 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
-//Create cube and add to scene
-const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshBasicMaterial( { color: "rgb(255, 0, 0)" } );
-const cube = new THREE.Mesh( geometry, material );
+//Create all objects
+const geometry = {
+	"cube": new THREE.BoxGeometry( 1, 1, 1 ),
+	"plane": new THREE.PlaneGeometry( 5, 5 ),
+	"sphere": new THREE.SphereGeometry( 1, 32, 32 ),
+	"torus": new THREE.TorusGeometry( 1, 0.4, 16, 100 )
+};
+
+const material = {
+	"basic": new THREE.MeshBasicMaterial( { color: "rgb(255, 0, 0)" } ),
+	"lambert": new THREE.MeshLambertMaterial( { color: "rgb(255, 0, 0)" } ),
+	"phong": new THREE.MeshPhongMaterial( { color: "rgb(255, 0, 0)" } ),
+	"standard": new THREE.MeshStandardMaterial( { color: "rgb(255, 0, 0)" } ),
+	"toon": new THREE.MeshToonMaterial( { color: "rgb(255, 0, 0)" } )
+};
+
+//Create plane
+const plane = new THREE.Mesh( geometry.plane.clone(), material.basic.clone() );
+plane.geometry.rotateX(-Math.PI / 2);
+plane.material.side = THREE.DoubleSide;
+plane.material.color = new THREE.Color("rgb(55, 55, 55)");
+plane.position.y = -1;
+scene.add( plane );
+
+//Create cube
+const cube = new THREE.Mesh( geometry.cube.clone(), material.basic.clone() );
+cube.position.x = 2;
 scene.add( cube );
 
 //Setup scene and camera
@@ -38,21 +61,28 @@ window.addEventListener( 'keyup', function (event) {
 	test.onKeyUp(event);
 }, false );
 
-//Animate scene
-const animate = function () {
-	requestAnimationFrame( animate );
+//Render loop
+let oldT = null;
+function animate() {
+	requestAnimationFrame((t) => {
+		if (oldT === null) {
+			oldT = t;
+		}
 
-	cube.rotateX(0.01);
-	cube.rotateY(0.01);
+		step(t - oldT);
+		oldT= t;
+		animate();
+	});
+}
 
-	test.update();
-
+function step(timeElapsed) {
+	const deltaTime = timeElapsed * 0.001;
+	test.update(timeElapsed);
 	renderer.render( scene, camera );
-};
-
-//Render scene
-animate();
+}
 
 window.addEventListener('mousemove', function(event) {
 	test.updateMouseDelta(event);
 });
+
+animate();
