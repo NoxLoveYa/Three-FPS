@@ -83,11 +83,11 @@ export default class fpsController {
 
         const forward = new THREE.Vector3(0, 0, -1);
         forward.applyQuaternion(qx);
-        forward.multiplyScalar(forwardVelocity * deltaTime * this.properties_.speed * 0.001);
+        forward.multiplyScalar(forwardVelocity * deltaTime * this.properties_.speed);
 
         const left = new THREE.Vector3(-1, 0, 0);
         left.applyQuaternion(qx);
-        left.multiplyScalar(strafeVelocity * deltaTime * this.properties_.speed * 0.001);
+        left.multiplyScalar(strafeVelocity * deltaTime * this.properties_.speed);
 
         this.camera_.position.add(forward);
         this.camera_.position.add(left);
