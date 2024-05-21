@@ -29,6 +29,7 @@ const material = {
 
 //Create plane
 const plane = new THREE.Mesh( geometry.plane.clone(), material.basic.clone() );
+plane.geometry.scale(2, 2, 2);
 plane.geometry.rotateX(-Math.PI / 2);
 plane.material.side = THREE.DoubleSide;
 plane.material.color = new THREE.Color("rgb(55, 55, 55)");
@@ -44,7 +45,7 @@ scene.add( cube );
 camera.position.z = 5;
 
 const fpsCamera = new fpsController(camera, renderer.domElement);
-const physics = new physicsController(camera, renderer.domElement);
+const physics = new physicsController(camera, scene, renderer.domElement);
 
 //resize renderer on window resize
 window.addEventListener( 'resize', function () {
