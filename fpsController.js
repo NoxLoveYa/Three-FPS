@@ -14,6 +14,8 @@ export default class fpsController {
             d: false
         };
         this.properties_ = defaultInfos;
+        this.canvas_ = domElement;
+        //this.canvas_.addEventListener('click', this.requestPointerLock);
     }
 
     onKeyDown(event) {
@@ -41,5 +43,27 @@ export default class fpsController {
         movement.normalize();
         movement.multiplyScalar(this.properties_.speed);
         this.camera_.position.add(movement);
+        if (this.canvas_)
+            this.canvas_.onclick = this.requestPointerLock;
+    }
+
+    lockChangeAlert() {
+        if (document.pointerLockElement === canvas || document.mozPointerLockElement === canvas || document.webkitPointerLockElement === canvas) {
+            document.body.style.cursor = "none";
+        } else {
+            document.body.style.cursor = "auto";
+        }
+    }
+
+    requestPointerLock() {
+        this.requestPointerLock = this.requestPointerLock || this.mozRequestPointerLock || this.webkitRequestPointerLock;
+        this.requestPointerLock();
+        document.addEventListener('pointerlockchange', this.lockChangeAlert, false);
+    }
+
+    exitPointerLock() {
+        document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock || document.webkitExitPointerLock;
+        document.exitPointerLock();
+        document.removeEventListener('pointerlockchange', lockChangeAlert, false);
     }
 }

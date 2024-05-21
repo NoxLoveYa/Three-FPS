@@ -42,10 +42,10 @@ window.addEventListener( 'keyup', function (event) {
 const animate = function () {
 	requestAnimationFrame( animate );
 
-	cube.rotation.x += 0.01;
-	cube.rotation.y += 0.01;
+	cube.rotateX(0.01);
+	cube.rotateY(0.01);
 
-	test.update()
+	test.update();
 
 	renderer.render( scene, camera );
 };
