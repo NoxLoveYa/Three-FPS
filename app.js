@@ -75,9 +75,53 @@ function animate() {
 	});
 }
 
+var objects = [];
+
 function step(timeElapsed) {
+	//Calculate delta time
 	const deltaTime = timeElapsed * 0.001;
+	//Update camera
 	fpsCamera.update(timeElapsed);
+	let hits = fpsCamera.fireLookRay();
+	//Update objects
+	for (let i = 0; i < hits.length; i++) {
+		//avoid changing plane
+		if (hits[i].object === plane) {
+			continue;
+		}
+		hits[i].object.rotation.x += 1 * deltaTime;
+		hits[i].object.rotation.y += 1 * deltaTime;
+		//Add to objects if not already in
+		let found = false;
+		for (let x = 0; x < objects.length; x++) {
+			if (objects[x] === hits[i].object) {
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			objects.push(hits[i].object);
+		}
+	}
+	for (let x = 0; x < objects.length; x++) {
+		if (objects[x] === plane) {
+			continue;
+		}
+		// check if ojects[i] is in hits
+		let found = false;
+		for (let i = 0; i < hits.length; i++) {
+			if (hits[i].object === objects[x]) {
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			objects[x].rotation.x = 0;
+			objects[x].rotation.y = 0;
+			objects.splice(x, 1);
+		}
+	}
+	//Render scene
 	renderer.render( scene, camera );
 }
 
