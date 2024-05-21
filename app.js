@@ -43,7 +43,7 @@ scene.add( cube );
 
 //Setup scene and camera
 camera.position.z = 5;
-camera.position.y = 0.2;
+camera.position.y = 3;
 
 const fpsCamera = new fpsController(camera, renderer.domElement);
 const physics = new physicsController(camera, scene, renderer.domElement);
