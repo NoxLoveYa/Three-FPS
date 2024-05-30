@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import fpsController, * as FPSController from './fpsController.js';
 import physicsController, * as PHYSICSController from './physicsController.js';
+import entity, * as entityTypes from './entity.js';
+import entityController, * as ENTITYController from './entityController.js';
 
 //Create scene and camera
 const scene = new THREE.Scene();
