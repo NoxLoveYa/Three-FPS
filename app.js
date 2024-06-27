@@ -41,7 +41,7 @@ scene.add( plane );
 //Create cube
 const cube = new THREE.Mesh( geometry.cube.clone(), material.basic.clone() );
 cube.position.x = 2;
-cube.position.y = -0.6;
+cube.position.y = -1.1;
 scene.add( cube );
 
 //Setup scene and camera

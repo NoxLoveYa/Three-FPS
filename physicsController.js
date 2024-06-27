@@ -56,6 +56,7 @@ export default class physicsController {
 
     applyVelocity(deltaTime) {
         // Check for collisions
+        var collided = false;
         const bufferDistance = 0.25;
 
         const velocityClone = this.velocity_.clone();
@@ -65,13 +66,12 @@ export default class physicsController {
         direction.y = 0; // We're only concerned with horizontal collisions
 
         // Calculate the potential future position
-        const futurePosition = this.camera_.position.clone().add(velocityClone.clone().multiplyScalar(deltaTime));
         const origin = this.camera_.position.clone();
-        origin.y += this.properties_.height;
+        console.log(origin);
 
         // Set up the raycaster
-        const raycaster = new THREE.Raycaster(origin, direction);
-        const intersects = raycaster.intersectObjects(this.scene_.children);
+        var raycaster = new THREE.Raycaster(origin, direction);
+        var intersects = raycaster.intersectObjects(this.scene_.children);
 
         for (let i = 0; i < intersects.length; i++) {
             const intersect = intersects[i];
@@ -85,18 +85,21 @@ export default class physicsController {
                 // A collision is imminent, so stop the character's movement
                 this.velocity_.x = 0;
                 this.velocity_.z = 0;
+                collided = true;
                 break;
             }
         }
 
         //Apply velocity to the camera
-        this.camera_.position.x += this.velocity_.x * deltaTime;
         if (this.isOnFloor_) {
             if (!this.isJumping_)
                 this.velocity_.y = 0;
         }
         this.camera_.position.y += this.velocity_.y * deltaTime;
-        this.camera_.position.z += this.velocity_.z * deltaTime;
+        if (!collided) {
+            this.camera_.position.x += this.velocity_.x * deltaTime;
+            this.camera_.position.z += this.velocity_.z * deltaTime;
+        }
         this.velocity_.x = 0;
         this.velocity_.z = 0;
     }
