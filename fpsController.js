@@ -2,13 +2,13 @@ import * as THREE from 'three';
 import clamp, * as UTILS from './utils.js';
 
 const defaultInfos = {
-    speed: 2,
+    speed: 75,
     sensitivity: 20,
     in_focus: true
 }
 
 export default class fpsController {
-    constructor(camera, domElement) {
+    constructor(camera, domElement, physicsController) {
         this.camera_ = camera;
         this.inputs_ = {
             z: false,
@@ -25,6 +25,7 @@ export default class fpsController {
         };
         this.phi_ = 0;
         this.theta_ = 0;
+        this.physicsController_ = physicsController;
         this.scene_ = null;
     }
 
@@ -89,8 +90,11 @@ export default class fpsController {
         left.applyQuaternion(qx);
         left.multiplyScalar(strafeVelocity * deltaTime * this.properties_.speed);
 
-        this.camera_.position.add(forward);
-        this.camera_.position.add(left);
+        forward.add(left);
+
+        this.physicsController_.velocity_.add(forward);
+
+        // this.camera_.position.add(forward);
     }
 
     headRotate() {

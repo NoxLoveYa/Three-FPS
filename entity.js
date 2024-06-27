@@ -8,12 +8,11 @@ const defaultInfos = {
 export default class entity extends THREE.SkinnedMesh {
     constructor(geometry, material, type) {
         super(geometry, material);
-        this.type = type;
+        this.type_ = type;
         this.properties_ = defaultInfos;
     }
 
     update(deltaTime) {
-        //Update the entity
     }
 
     getProperties() {
@@ -28,7 +27,7 @@ export default class entity extends THREE.SkinnedMesh {
         this.properties_.healthPoints -= damage;
     }
 
-    heal(heal) {
+    heal(heal) {        //Update the entity
         this.properties_.healthPoints += heal;
     }
 
@@ -38,5 +37,15 @@ export default class entity extends THREE.SkinnedMesh {
 
     getHealth() {
         return this.properties_.healthPoints;
+    }
+}
+
+export class hostileEntity extends entity {
+    constructor(geometry, material, type) {
+        super(geometry, material, type);
+    }
+
+    update(deltaTime) {
+        console.log("Hostile entity update");
     }
 }

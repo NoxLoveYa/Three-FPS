@@ -55,6 +55,41 @@ export default class physicsController {
     }
 
     applyVelocity(deltaTime) {
+        // Check for collisions
+        const bufferDistance = 0.25;
+
+        const velocityClone = this.velocity_.clone();
+        velocityClone.y = 0; // Ignore vertical velocity
+
+        const direction = this.velocity_.clone().normalize();
+        direction.y = 0; // We're only concerned with horizontal collisions
+
+        // Calculate the potential future position
+        const futurePosition = this.camera_.position.clone().add(velocityClone.clone().multiplyScalar(deltaTime));
+        const origin = this.camera_.position.clone();
+        origin.y += this.properties_.height;
+
+        // Set up the raycaster
+        const raycaster = new THREE.Raycaster(origin, direction);
+        const intersects = raycaster.intersectObjects(this.scene_.children);
+
+        for (let i = 0; i < intersects.length; i++) {
+            const intersect = intersects[i];
+            const distanceToIntersection = intersect.distance;
+
+            // Calculate the distance we would travel in the next frame
+            const distanceToTravel = velocityClone.length() * deltaTime;
+
+            // Check if there's an intersection within the distance we would travel
+            if (distanceToIntersection < distanceToTravel + bufferDistance  ) {
+                // A collision is imminent, so stop the character's movement
+                this.velocity_.x = 0;
+                this.velocity_.z = 0;
+                break;
+            }
+        }
+
+        //Apply velocity to the camera
         this.camera_.position.x += this.velocity_.x * deltaTime;
         if (this.isOnFloor_) {
             if (!this.isJumping_)
@@ -62,6 +97,8 @@ export default class physicsController {
         }
         this.camera_.position.y += this.velocity_.y * deltaTime;
         this.camera_.position.z += this.velocity_.z * deltaTime;
+        this.velocity_.x = 0;
+        this.velocity_.z = 0;
     }
 
     applyGravity(deltaTime) {
