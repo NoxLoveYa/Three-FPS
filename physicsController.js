@@ -67,7 +67,6 @@ export default class physicsController {
 
         // Calculate the potential future position
         const origin = this.camera_.position.clone();
-        console.log(origin);
 
         // Set up the raycaster
         var raycaster = new THREE.Raycaster(origin, direction);
@@ -87,6 +86,29 @@ export default class physicsController {
                 this.velocity_.z = 0;
                 collided = true;
                 break;
+            }
+        }
+
+        if (!collided) {
+            const feet_origin = this.camera_.position.clone();
+            feet_origin.y -= this.properties_.height + bufferDistance;
+            var raycaster = new THREE.Raycaster(feet_origin, direction);
+            var intersects = raycaster.intersectObjects(this.scene_.children);
+            for (let i = 0; i < intersects.length; i++) {
+                const intersect = intersects[i];
+                const distanceToIntersection = intersect.distance;
+    
+                // Calculate the distance we would travel in the next frame
+                const distanceToTravel = velocityClone.length() * deltaTime;
+    
+                // Check if there's an intersection within the distance we would travel
+                if (distanceToIntersection < distanceToTravel + bufferDistance  ) {
+                    // A collision is imminent, so stop the character's movement
+                    this.velocity_.x = 0;
+                    this.velocity_.z = 0;
+                    collided = true;
+                    break;
+                }
             }
         }
 
