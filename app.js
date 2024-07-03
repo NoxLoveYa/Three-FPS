@@ -60,18 +60,25 @@ window.addEventListener( 'resize', function () {
 
 //Add event listeners
 window.addEventListener( 'keydown', function (event) {
+	if (fpsCamera.properties_.in_focus === false || gameRunning === false) {
+		return;
+	}
 	fpsCamera.onKeyDown(event);
 	physics.onKeyDown(event);
 }, false );
 
 window.addEventListener( 'keyup', function (event) {
+	if (fpsCamera.properties_.in_focus === false || gameRunning === false) {
+		return;
+	}
 	fpsCamera.onKeyUp(event);
 	physics.onKeyUp(event);
 }, false );
 
 //Render loop
+var gameRunning = false;
 let oldT = null;
-function animate() {
+export default function animate() {
 	requestAnimationFrame((t) => {
 		if (oldT === null) {
 			oldT = t;
@@ -79,7 +86,8 @@ function animate() {
 
 		step(t - oldT);
 		oldT= t;
-		animate();
+		if (gameRunning)
+			animate();
 	});
 }
 
@@ -98,10 +106,16 @@ function step(timeElapsed) {
 fpsCamera.scene_ = scene;
 
 window.addEventListener('mousemove', function(event) {
+	if (fpsCamera.properties_.in_focus === false || gameRunning === false) {
+		return;
+	}
 	fpsCamera.updateMouseDelta(event);
 });
 
 window.addEventListener('click', function(event) {
+	if (fpsCamera.properties_.in_focus === false || gameRunning === false) {
+		return;
+	}
 	let hits = fpsCamera.fireLookRay();
 	for (let i = 0; i < hits.length; i++) {
 		if (hits[i].object === plane) {
@@ -111,4 +125,24 @@ window.addEventListener('click', function(event) {
 	}
 });
 
-animate();
+const playButton = document.getElementById('PlayButton');
+
+function playAlert() {
+	if (gameRunning === false) {
+		playButton.style.display = "block";
+		return;
+	} else {
+		playButton.style.display = "none";
+	}
+}
+
+playButton.addEventListener('click', function() {
+	if (gameRunning === false) {
+		gameRunning = true;
+		playAlert();
+		animate();
+	} else {
+		gameRunning = false;
+		renderer.clear();
+	}
+});

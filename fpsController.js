@@ -57,8 +57,10 @@ export default class fpsController {
     lockChangeAlert() {
         if (document.pointerLockElement === canvas || document.mozPointerLockElement === canvas || document.webkitPointerLockElement === canvas) {
             document.body.style.cursor = "none";
+            this.properties_.in_focus = true;
         } else {
             document.body.style.cursor = "auto";
+            this.properties_.in_focus = false;
         }
     }
 
