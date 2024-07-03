@@ -15,7 +15,7 @@ export default class entity extends THREE.SkinnedMesh {
     }
 
     update(deltaTime) {
-        checkCollisions();
+        // checkCollisions();
     }
 
     getProperties() {
