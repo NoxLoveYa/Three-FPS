@@ -19,6 +19,9 @@ export default class fpsController {
         this.properties_ = defaultInfos;
         this.canvas_ = domElement;
         this.canvas_.addEventListener('click', this.requestPointerLock);
+        document.addEventListener('pointerlockchange', () => {
+            this.properties_.in_focus = document.pointerLockElement === this.canvas_;
+        });
         this.mouseDelta_ = {
             x: 0,
             y: 0
@@ -54,20 +57,9 @@ export default class fpsController {
         }
     }
 
-    lockChangeAlert() {
-        if (document.pointerLockElement === canvas || document.mozPointerLockElement === canvas || document.webkitPointerLockElement === canvas) {
-            document.body.style.cursor = "none";
-            this.properties_.in_focus = true;
-        } else {
-            document.body.style.cursor = "auto";
-            this.properties_.in_focus = false;
-        }
-    }
-
     requestPointerLock() {
         this.requestPointerLock = this.requestPointerLock || this.mozRequestPointerLock || this.webkitRequestPointerLock;
         this.requestPointerLock();
-        document.addEventListener('pointerlockchange', this.lockChangeAlert, false);
     }
 
     updateMouseDelta(event) {
@@ -95,8 +87,6 @@ export default class fpsController {
         forward.add(left);
 
         this.physicsController_.velocity_.add(forward);
-
-        // this.camera_.position.add(forward);
     }
 
     headRotate() {

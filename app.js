@@ -49,7 +49,7 @@ const physics = new physicsController(camera, scene, renderer.domElement);
 const fpsCamera = new fpsController(camera, renderer.domElement, physics);
 const entities = new entityController(scene);
 // entities.addEntity(new entityTypes.hostileEntity(geometry.cube.clone(), material.basic.clone(), "vilain cube"));
-
+// entities.addEntity(new entityTypes.hostileEntity(geometry.sphere.clone(), material.basic.clone(), "vilain sphere"));
 //resize renderer on window resize
 window.addEventListener( 'resize', function () {
 	camera.aspect = window.innerWidth / window.innerHeight;
@@ -88,6 +88,8 @@ export default function animate() {
 		oldT= t;
 		if (gameRunning)
 			animate();
+		else
+			animateSmoke();
 	});
 }
 
@@ -113,7 +115,8 @@ window.addEventListener('mousemove', function(event) {
 });
 
 window.addEventListener('click', function(event) {
-	if (fpsCamera.properties_.in_focus === false || gameRunning === false) {
+	fpsCamera.properties_.in_focus = true;
+	if (gameRunning === false) {
 		return;
 	}
 	let hits = fpsCamera.fireLookRay();
