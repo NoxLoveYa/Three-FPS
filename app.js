@@ -48,6 +48,8 @@ scene.add( cube );
 const physics = new physicsController(camera, scene, renderer.domElement);
 const fpsCamera = new fpsController(camera, renderer.domElement, physics);
 const entities = new entityController(scene);
+console.log(geometry.cube.attributes)
+entities.addEntity(new entityTypes.hostileEntity(geometry.cube.clone(), material.basic.clone(), physics, scene, "vilain cube"));
 // entities.addEntity(new entityTypes.hostileEntity(geometry.cube.clone(), material.basic.clone(), "vilain cube"));
 // entities.addEntity(new entityTypes.hostileEntity(geometry.sphere.clone(), material.basic.clone(), "vilain sphere"));
 //resize renderer on window resize
@@ -88,8 +90,6 @@ export default function animate() {
 		oldT= t;
 		if (gameRunning)
 			animate();
-		else
-			animateSmoke();
 	});
 }
 
@@ -101,6 +101,7 @@ function step(timeElapsed) {
 	//Update camera
 	fpsCamera.update(deltaTime);
 	physics.update(deltaTime);
+	entities.update(deltaTime);
 	//Render scene
 	renderer.render( scene, camera );
 }
@@ -115,7 +116,6 @@ window.addEventListener('mousemove', function(event) {
 });
 
 window.addEventListener('click', function(event) {
-	fpsCamera.properties_.in_focus = true;
 	if (gameRunning === false) {
 		return;
 	}
