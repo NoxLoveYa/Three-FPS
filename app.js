@@ -48,7 +48,6 @@ scene.add( cube );
 const physics = new physicsController(camera, scene, renderer.domElement);
 const fpsCamera = new fpsController(camera, renderer.domElement, physics);
 const entities = new entityController(scene);
-console.log(geometry.cube.attributes)
 entities.addEntity(new entityTypes.hostileEntity(geometry.cube.clone(), material.basic.clone(), physics, scene, "vilain cube"));
 // entities.addEntity(new entityTypes.hostileEntity(geometry.cube.clone(), material.basic.clone(), "vilain cube"));
 // entities.addEntity(new entityTypes.hostileEntity(geometry.sphere.clone(), material.basic.clone(), "vilain sphere"));
@@ -120,11 +119,11 @@ window.addEventListener('click', function(event) {
 		return;
 	}
 	let hits = fpsCamera.fireLookRay();
-	for (let i = 0; i < hits.length; i++) {
-		if (hits[i].object === plane) {
-			continue;
+	if (hits.length > 0) {
+		let hit = hits[0];
+		if (hit.object.type_ !== undefined) {
+			hit.object.takeDamage(1);
 		}
-		scene.remove(hits[i].object);
 	}
 });
 

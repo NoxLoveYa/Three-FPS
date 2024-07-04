@@ -2,8 +2,17 @@ import * as THREE from 'three';
 import clamp, * as UTILS from './utils.js';
 
 const defaultInfos = {
-    healthPoints: 100,
+    isOnFloor: false
+}
+
+const enemyInfos = {
     isOnFloor: false,
+    baseHealthPoints: 100,
+    healthPoints: 100,
+    damage: 10,
+    attackSpeed: 1,
+    attackRange: 1,
+    movementSpeed: 1
 }
 
 export default class entity extends THREE.Mesh {
@@ -29,26 +38,6 @@ export default class entity extends THREE.Mesh {
 
     getProperties() {
         return this.properties_;
-    }
-
-    isAlive() {
-        return this.properties_.healthPoints > 0;
-    }
-
-    takeDamage(damage) {
-        this.properties_.healthPoints -= damage;
-    }
-
-    heal(heal) {        //Update the entity
-        this.properties_.healthPoints += heal;
-    }
-
-    setHealth(health) {
-        this.properties_.healthPoints = health;
-    }
-
-    getHealth() {
-        return this.properties_.healthPoints;
     }
 
     isOnFloor() {
@@ -156,11 +145,48 @@ export default class entity extends THREE.Mesh {
 export class hostileEntity extends entity {
     constructor(geometry, material, physicsController = null, scene = null, type) {
         super(geometry, material, physicsController, scene, type);
+        this.properties_ = enemyInfos;
     }
 
     update(deltaTime) {
         super.update(deltaTime);
-        this.velocity_.x = 0.1
+        if (this.isAlive() === false) {
+            this.die();
+            return;
+        } else {
+            const healthPercentage = this.properties_.healthPoints / this.properties_.baseHealthPoints;
+            const red = Math.round(255 * (1 - healthPercentage));
+            const green = Math.round(255 * healthPercentage);
+            const color = new THREE.Color(red / 255, green / 255, 0);
+            this.material.color = color;
+        }
+    }
+
+    isAlive() {
+        return this.properties_.healthPoints > 0;
+    }
+
+    takeDamage(damage) {
+        this.properties_.healthPoints -= damage;
+        if (this.properties_.healthPoints <= 0) {
+            this.die();
+        }
+    }
+
+    heal(heal) {        //Update the entity
+        this.properties_.healthPoints += heal;
+    }
+
+    setHealth(health) {
+        this.properties_.healthPoints = health;
+    }
+
+    getHealth() {
+        return this.properties_.healthPoints;
+    }
+
+    die() {
+        this.scene_.remove(this);
     }
 }
 
