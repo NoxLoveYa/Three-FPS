@@ -65,7 +65,6 @@ export default class physicsController {
         const direction = this.velocity_.clone().normalize();
         direction.y = 0; // We're only concerned with horizontal collisions
 
-        // Calculate the potential future position
         const origin = this.camera_.position.clone();
 
         // Set up the raycaster

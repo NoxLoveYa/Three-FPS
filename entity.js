@@ -3,7 +3,6 @@ import clamp, * as UTILS from './utils.js';
 
 const defaultInfos = {
     healthPoints: 100,
-    bufferDistance: 0.25,
     isOnFloor: false,
 }
 
@@ -15,18 +14,16 @@ export default class entity extends THREE.Mesh {
         this.velocity_ = new THREE.Vector3(0, 0, 0);
         this.physicsController_ = physicsController;
         this.scene_ = scene;
-        this.position.set(0, 10, 0);
     }
 
     update(deltaTime) {
         if (this.scene_ !== null) {
             this.properties_.isOnFloor = this.isOnFloor();
-            console.log(this.properties_.isOnFloor);
         }
         if (this.physicsController_ !== null && this.properties_.isOnFloor === false) {
             this.applyGravity(deltaTime);
         }
-
+        this.checkCollisions(deltaTime)
         this.applyVelocity(deltaTime);
     }
 
@@ -64,26 +61,85 @@ export default class entity extends THREE.Mesh {
         const intersects = raycaster.intersectObjects(this.scene_.children);
 
         for (let i = 0; i < intersects.length; i++) {
-            if (intersects[i].distance.toFixed(4) <= 0.5) {
+            if (intersects[i].distance.toFixed(4) <= this.geometry.parameters.height / 2) {
                 return true;
             }
         }
         return false;
     }
 
-    checkCollisions() {
-        // Check for collisionsentity
-        const bufferDistance = this.properties_.bufferDistance;
-        const origin = this.position.clone();
+    checkCollisions(deltaTime) {
+        const velocityClone = this.velocity_.clone();
+        velocityClone.y = 0; // Ignore vertical velocity
+
         const direction = this.velocity_.clone().normalize();
-        const raycaster = new THREE.Raycaster(origin, direction);
-        const intersects = raycaster.intersectObjects(this.scene_.children);
+        direction.y = 0; // We're only concerned with horizontal collisions
+
+        const origin = this.position.clone();
+
+        // Set up the raycaster
+        var raycaster = new THREE.Raycaster(origin, direction);
+        var intersects = raycaster.intersectObjects(this.scene_.children);
 
         for (let i = 0; i < intersects.length; i++) {
-            if (intersects[i].distance.toFixed(4) <= bufferDistance) {
-                
+            const intersect = intersects[i];
+            const distanceToIntersection = intersect.distance;
+
+            // Calculate the distance we would travel in the next frame
+            const distanceToTravel = velocityClone.length() * deltaTime;
+
+            // Check if there's an intersection within the distance we would travel
+            if (distanceToIntersection < distanceToTravel + this.geometry.parameters.width / 2) {
+                // A collision is imminent, so stop the character's movement
+                this.velocity_.x = 0;
+                this.velocity_.z = 0;
+                return true;
             }
         }
+
+        origin.y -= this.geometry.parameters.height / 2;
+
+        raycaster = new THREE.Raycaster(origin, direction);
+        intersects = raycaster.intersectObjects(this.scene_.children);
+
+        for (let i = 0; i < intersects.length; i++) {
+            const intersect = intersects[i];
+            const distanceToIntersection = intersect.distance;
+
+            // Calculate the distance we would travel in the next frame
+            const distanceToTravel = velocityClone.length() * deltaTime;
+
+            // Check if there's an intersection within the distance we would travel
+            if (distanceToIntersection < distanceToTravel + this.geometry.parameters.width / 2) {
+                // A collision is imminent, so stop the character's movement
+                this.velocity_.x = 0;
+                this.velocity_.z = 0;
+                return true;
+            }
+        }
+
+        origin.y += this.geometry.parameters.height / 2;
+
+        raycaster = new THREE.Raycaster(origin, direction);
+        intersects = raycaster.intersectObjects(this.scene_.children);
+
+        for (let i = 0; i < intersects.length; i++) {
+            const intersect = intersects[i];
+            const distanceToIntersection = intersect.distance;
+
+            // Calculate the distance we would travel in the next frame
+            const distanceToTravel = velocityClone.length() * deltaTime;
+
+            // Check if there's an intersection within the distance we would travel
+            if (distanceToIntersection < distanceToTravel + this.geometry.parameters.width / 2) {
+                // A collision is imminent, so stop the character's movement
+                this.velocity_.x = 0;
+                this.velocity_.z = 0;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     applyGravity(deltaTime) {
@@ -104,6 +160,7 @@ export class hostileEntity extends entity {
 
     update(deltaTime) {
         super.update(deltaTime);
+        this.velocity_.x = 0.1
     }
 }
 
