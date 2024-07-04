@@ -6,34 +6,41 @@ const defaultInfos = {
 export default class entityController {
     constructor(scene) {
         this.scene_ = scene;
-        this.entities_ = [];
     }
 
     addEntity(entity) {
-        this.entities_.push(entity);
         this.scene_.add(entity);
     }
 
     removeEntity(entity) {
-        this.entities_.splice(this.entities_.indexOf(entity), 1);
         this.scene_.remove(entity);
     }
 
     update(deltaTime) {
-        this.entities_.forEach(entity => {
-            entity.update(deltaTime);
+        this.scene_.children.forEach(obj => {
+            if (obj.update !== undefined && typeof obj.update === 'function' && obj.type_ !== undefined) {
+                obj.update(deltaTime);
+            }
         });
     }
 
     getEntities() {
-        return this.entities_;
-    }
-
-    getEntity(index) {
-        return this.entities_[index];
+        var entities = [];
+        this.scene_.children.forEach(obj => {
+            if (obj.update !== undefined && typeof obj.update === 'function' && obj.type_ !== undefined) {
+                entities.push(obj);
+            }
+        });
+        return entities;
     }
 
     getEntitiesByType(type) {
-        return this.entities_.filter(entity => entity.type === type);
+        var entities = [];
+        this.scene_.children.forEach(obj => {
+            if (obj.type_ === type) {
+                entities.push(obj);
+            }
+        });
+        return entities;
     }
 }

@@ -49,6 +49,14 @@ const physics = new physicsController(camera, scene, renderer.domElement);
 const fpsCamera = new fpsController(camera, renderer.domElement, physics);
 const entities = new entityController(scene);
 entities.addEntity(new entityTypes.hostileEntity(geometry.cube.clone(), material.basic.clone(), physics, fpsCamera, scene, "vilain cube"));
+const vilainCube = entities.getEntitiesByType("vilain cube")[0];
+vilainCube.material.color = new THREE.Color("rgb(0, 0, 255)");
+vilainCube.scale.set(0.5, 0.5, 0.5);
+entities.addEntity(new entityTypes.healthPackEntity(geometry.sphere.clone(), material.basic.clone(), fpsCamera, scene, "Medkit"));
+const healthPack = entities.getEntitiesByType("Medkit")[0]
+healthPack.material.color = new THREE.Color("rgb(0, 255, 0)");
+healthPack.scale.set(0.1, 0.1, 0.1);
+healthPack.position.set(4, -0.9, 4);
 // entities.addEntity(new entityTypes.hostileEntity(geometry.cube.clone(), material.basic.clone(), "vilain cube"));
 // entities.addEntity(new entityTypes.hostileEntity(geometry.sphere.clone(), material.basic.clone(), "vilain sphere"));
 //resize renderer on window resize
@@ -128,13 +136,16 @@ window.addEventListener('click', function(event) {
 });
 
 const playButton = document.getElementById('PlayButton');
+const crosshair = document.getElementById('crosshair');
 
 function playAlert() {
 	if (gameRunning === false) {
 		playButton.style.display = "block";
+		crosshair.style.display = "none";
 		return;
 	} else {
 		playButton.style.display = "none";
+		crosshair.style.display = "block";
 	}
 }
 

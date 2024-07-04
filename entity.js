@@ -12,8 +12,13 @@ const enemyInfos = {
     damage: 10,
     attackSpeed: 1,
     lastAttack: 0,
-    attackRange: 2,
+    attackRange: 1,
     movementSpeed: 0.35
+}
+
+const healthPackInfos = {
+    healAmount: 50,
+    healRadius: 0.2
 }
 
 export default class entity extends THREE.Mesh {
@@ -133,7 +138,7 @@ export default class entity extends THREE.Mesh {
     }
 
     applyGravity(deltaTime) {
-        this.velocity_.y += this.physicsController_.properties_.gravity * deltaTime;
+        this.velocity_.y += this.physicsController_.properties_.gravity;
     }
 
     applyVelocity(deltaTime) {
@@ -158,9 +163,9 @@ export class hostileEntity extends entity {
             return;
         }
         const healthPercentage = this.properties_.healthPoints / this.properties_.baseHealthPoints;
-        const red = Math.round(255 * (1 - healthPercentage));
+        const blue = Math.round(255 * (1 - healthPercentage));
         const green = Math.round(255 * healthPercentage);
-        const color = new THREE.Color(red / 255, green / 255, 0);
+        const color = new THREE.Color(0, green / 255, blue / 255);
         this.material.color = color;
         this.attack();
     }
@@ -193,25 +198,38 @@ export class hostileEntity extends entity {
     }
 
     attack() {
-        const playerPosition = this.fpsController_.camera_.position; // Replace getPlayerPosition() with the actual function to get the player's position
+        const playerPosition = this.fpsController_.camera_.position;
         const direction = playerPosition.clone().sub(this.position).normalize();
         const distance = playerPosition.distanceTo(this.position);
 
-        if (distance <= this.properties_.attackRange && Date.now() - this.properties_.lastAttack >= this.properties_.attackSpeed * 1000) {
+        if (distance <= this.properties_.attackRange) {
+            if (Date.now() - this.properties_.lastAttack < this.properties_.attackSpeed * 1000) {
+                return;
+            }
             console.log("Attack");
             this.properties_.lastAttack = Date.now();
-            // Deal damage to the player
         } else
             this.velocity_ = direction.multiplyScalar(this.properties_.movementSpeed);
     }
 }
 
 export class healthPackEntity extends entity {
-    constructor(geometry, material, type) {
-        super(geometry, material, type);
+    constructor(geometry, material, fpsController = null, scene = null, type) {
+        super(geometry, material, null, fpsController, scene, type);
+        this.properties_ = healthPackInfos
     }
 
     update(deltaTime) {
-        console.log("Health pack update");
+        const playerPosition = this.fpsController_.camera_.position;
+        const distance = playerPosition.distanceTo(this.position);
+
+        if (distance <= 1) {
+            console.log("Healed Player by " + this.properties_.healAmount);
+            this.die();
+        }
+    }
+
+    die() {
+        this.scene_.remove(this);
     }
 }
