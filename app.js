@@ -41,14 +41,14 @@ scene.add( plane );
 //Create cube
 const cube = new THREE.Mesh( geometry.cube.clone(), material.basic.clone() );
 cube.position.x = 2;
-cube.position.y = -1.1;
+cube.position.y = -1;
 scene.add( cube );
 
 //Setup scene and camera
 const physics = new physicsController(camera, scene, renderer.domElement);
 const fpsCamera = new fpsController(camera, renderer.domElement, physics);
 const entities = new entityController(scene);
-entities.addEntity(new entityTypes.hostileEntity(geometry.cube.clone(), material.basic.clone(), physics, scene, "vilain cube"));
+entities.addEntity(new entityTypes.hostileEntity(geometry.cube.clone(), material.basic.clone(), physics, fpsCamera, scene, "vilain cube"));
 // entities.addEntity(new entityTypes.hostileEntity(geometry.cube.clone(), material.basic.clone(), "vilain cube"));
 // entities.addEntity(new entityTypes.hostileEntity(geometry.sphere.clone(), material.basic.clone(), "vilain sphere"));
 //resize renderer on window resize
